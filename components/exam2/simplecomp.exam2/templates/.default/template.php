@@ -4,11 +4,14 @@
 
 <ul>
 	<?foreach($arResult['FIRMS'] as $item):?>
+<<<<<<< HEAD
 	<?
 	$this->AddEditAction($arItem['ID'], $arItem['EDIT_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_EDIT"));
 	$this->AddDeleteAction($arItem['ID'], $arItem['DELETE_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_DELETE"), array("CONFIRM" => GetMessage('CT_BNL_ELEMENT_DELETE_CONFIRM')));
 	?>
 	<p class="news-item" id="<?=$this->GetEditAreaId($arItem['ID']);?>">
+=======
+>>>>>>> cf6353168793e7362b9533288429f6e2dd715802
 		<li>
 			<span><b><?=$item['NAME']?></b></span>
 			

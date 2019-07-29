@@ -26,10 +26,13 @@ class SimpleComp2 extends CBitrixComponent
         if(!$this->arParams['CACHE_TIME']) {
             $this->arParams['CACHE_TIME'] = 3600000;
         }
+<<<<<<< HEAD
         // проверка на наличие параметра 'F' 
         if(isset($_GET["F"])){
             $this->arParams['CACHE_TIME'] = 0;
         }
+=======
+>>>>>>> cf6353168793e7362b9533288429f6e2dd715802
     }
     
     // запросы
@@ -55,6 +58,7 @@ class SimpleComp2 extends CBitrixComponent
         
         // получение елементов каталога и изменение url детального просмотра
         $arSort = array('NAME' => 'ASC', 'SORT' => 'ASC');
+<<<<<<< HEAD
         // добавление фильтра F
         $filter = array();
         if(isset($_GET["F"])){
@@ -64,12 +68,18 @@ class SimpleComp2 extends CBitrixComponent
                 array("<PROPERTY_PRICE" => 1500, "PROPERTY_MATERIAL" => "Металл, пластик"),
             );
         }
+=======
+>>>>>>> cf6353168793e7362b9533288429f6e2dd715802
         $arFilter = array(
             'IBLOCK_ID' => $this->arParams['PROD_IBLOCK_ID'],
             'ACTIVE' => 'Y',
             'CHECK_PERMISSIONS' => 'Y',
+<<<<<<< HEAD
             '!PROPERTY_'.$this->arParams['ELEMENT_PROP_CODE'] => false,
             $filter
+=======
+            '!PROPERTY_'.$this->arParams['ELEMENT_PROP_CODE'] => false
+>>>>>>> cf6353168793e7362b9533288429f6e2dd715802
         );
         $arSelect = array(
             'ID',
