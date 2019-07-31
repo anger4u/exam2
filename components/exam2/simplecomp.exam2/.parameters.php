@@ -30,6 +30,12 @@ $arComponentParameters = array(
 			"TYPE" => "STRING",
 			"DEFAULT" => '',
 		),
+		"NAV_COUNT" => array(
+			"PARENT" => "BASE",
+			"NAME" => GetMessage("NAV_COUNT"),
+			"TYPE" => "STRING",
+			"DEFAULT" => 1,
+		),
 		"CACHE_TIME"  =>  Array("DEFAULT"=>360000),
 	),
 );

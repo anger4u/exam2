@@ -48,18 +48,15 @@ class SimpleComp2 extends CBitrixComponent
             'NAME'
         );
         $arNavParams = Array(
-            "nPageSize" => $this->arParams["NAV_COUNT"],
+            "nPageSize" => (int) $this->arParams["NAV_COUNT"],
             "bShowAll" => true,
-            "nTopCount"=>5,
         );
-        $res = CIBlockElement::GetList(array('id'=>'asc'), $arFilter, $arNavParams, $arSelect);
+        $res = CIBlockElement::GetList(array(), $arFilter, false, $arNavParams, $arSelect);
         while ($ob = $res->Fetch())
         {
             $this->firms[] = $ob;
             //echo'<pre>';var_dump($ob);echo'</pre>';
         }
-        
-        $this->arResult["NAV_STRING"] = $res->GetPageNavStringEx($navComponentObject, "", "", true); //постраничная
         
         // получение елементов каталога и изменение url детального просмотра
         $arSort = array('NAME' => 'ASC', 'SORT' => 'ASC');
@@ -141,7 +138,6 @@ class SimpleComp2 extends CBitrixComponent
                 }
             }
         }
-        
         //echo '<pre>';var_dump($this->arResult);echo '</pre>';
     }
     
@@ -149,15 +145,33 @@ class SimpleComp2 extends CBitrixComponent
     private function bAdd()
     {
         $res = CIBlock::GetByID($this->arParams['PROD_IBLOCK_ID']);
-        $this->AddIncludeAreaIcons(
-            Array( //массив кнопок toolbar'a
-                Array(
-                    "ID" => "SIMPLECOMP_BUTTON",
-                    "TITLE" => 'ИБ в Админке',
-                    "URL" => '/bitrix/admin/iblock_element_admin.php?IBLOCK_ID=' . $this->arParams['PROD_IBLOCK_ID'] .'&type='.$res->Fetch()['IBLOCK_TYPE_ID'].'&lang='. LANGUAGE_ID .'&find_el_y=Y',
-                )
-            )
-        );	
+        $arIcons = Array( //массив кнопок toolbar'a
+            Array(
+                "ID" => "SIMPLECOMP_BUTTON",
+                "TITLE" => 'ИБ в Админке',
+                "URL" => '/bitrix/admin/iblock_element_admin.php?IBLOCK_ID=' . $this->arParams['PROD_IBLOCK_ID'] .'&type='.$res->Fetch()['IBLOCK_TYPE_ID'].'&lang='. LANGUAGE_ID .'&find_el_y=Y',
+                "IN_PARAMS_MENU" => true,
+                //"PARAMS" => array(
+                //    'width' => 770,
+                //    'height' => 570,
+                //    'resize' => true
+                //),
+                //"ICON" => "bx-context-toolbar-create-icon",
+                //"IN_MENU" => true, //показать в подменю компонента
+            ),
+        );
+        $this->AddIncludeAreaIcons($arIcons);
+    }
+    
+    // ТЕГИРОВАННЫЙ КЕШ
+    private function tCache()
+    {
+        if (defined('BX_COMP_MANAGED_CACHE') && is_object($GLOBALS['CACHE_MANAGER']))
+        {
+            $GLOBALS['CACHE_MANAGER'] -> RegisterTag('iblock_id_3');
+        
+        //$GLOBALS['CACHE_MANAGER'] -> RegisterTag('iblock_id_3');
+        }
     }
     
     // исполнение компонента
@@ -169,13 +183,13 @@ class SimpleComp2 extends CBitrixComponent
         if ($this -> StartResultCache(false, $USER->GetGroups()))
         {
             $this -> handlerParams();
+            $this -> tCache();
             $this -> firmsList();
             $this -> setResult();
             $this -> SetResultCacheKeys(array(
                 'FIRMS',
-                'MIN_PRICE',
+                'MIN_PRICE',    
                 'MAX_PRICE',
-                'NAV_STRING',
             ));
             $this -> IncludeComponentTemplate();
         }
@@ -183,6 +197,7 @@ class SimpleComp2 extends CBitrixComponent
 	{
 		$this->AbortResultCache();
 	}
+        $this->arResult["NAV_STRING"] = $res->GetPageNavStringEx($navComponentObject, "", "", true); //постраничная
         global $APPLICATION;
         if ($APPLICATION->GetShowIncludeAreas())
 		{

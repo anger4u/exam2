@@ -2,13 +2,15 @@
 if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 
 use Bitrix\Main\Loader,
-	Bitrix\Iblock;
+	Bitrix\Iblock,
+	Bitrix\Main\Localization\Loc;
 
 if(!$USER->IsAuthorized())
 {
 	return;
 }
 
+// ВАЛИДАЦИЯ ПАРАМЕТРОВ КОМПОНЕНТА
 if(!isset($arParams['CACHE_TIME']))
 {
 	$arParams['CACHE_TIME'] = 360000;
@@ -18,7 +20,7 @@ $arParams['NEWS_IBLOCK_ID'] = (int) $arParams['NEWS_IBLOCK_ID'];
 if($this->StartResultCache(false) && intval($arParams["NEWS_IBLOCK_ID"]) > 0)
 {
 	if(!Loader::includeModule("iblock"))
-	{
+	{	$this -> AbortResultCache();
 		return;
 	}
 	
@@ -95,7 +97,7 @@ $this->SetResultCacheKeys(array(
 		'USERS',
 		'NEWS_COUNT'
 	));
-var_export([__FILE__.__LINE__, $arResult]);
+//var_export([__FILE__.__LINE__, $arResult]);
 	$this->includeComponentTemplate();
 
 $APPLICATION->SetTitle(GetMessage('NEWS_TITLE') . '['.$arResult['NEWS_COUNT'].']');
