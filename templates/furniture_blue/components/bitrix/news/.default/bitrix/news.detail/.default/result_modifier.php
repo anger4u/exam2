@@ -17,3 +17,4 @@ if (intval($arParams['ID_CAN']) > 0) {
     }
 }
 ?>
+

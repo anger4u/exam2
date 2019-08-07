@@ -88,4 +88,10 @@ $arTemplateParameters["ID_CAN"] = array(
 	"DEFAULT" => "",
 );
 
+$arTemplateParameters["REPORT_AJAX"] = array(
+	"NAME" => GetMessage("T_IBLOCK_DESC_NEWS_COMPLAINTS"),
+	"TYPE" => "CHECKBOX",
+	"DEFAULT" => "N",
+);
+
 ?>

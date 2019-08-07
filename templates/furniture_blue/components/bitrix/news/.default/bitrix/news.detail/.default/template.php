@@ -1,4 +1,5 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+
 <div class="news-detail">
 	<?if($arParams["DISPLAY_PICTURE"]!="N" && is_array($arResult["DETAIL_PICTURE"])):?>
 		<img class="detail_picture" border="0" src="<?=$arResult["DETAIL_PICTURE"]["SRC"]?>" width="<?=$arResult["DETAIL_PICTURE"]["WIDTH"]?>" height="<?=$arResult["DETAIL_PICTURE"]["HEIGHT"]?>" alt="<?=$arResult["NAME"]?>"  title="<?=$arResult["NAME"]?>" />
@@ -9,6 +10,44 @@
 	<?if($arParams["DISPLAY_NAME"]!="N" && $arResult["NAME"]):?>
 		<h3><?=$arResult["NAME"]?></h3>
 	<?endif;?>
+	
+	
+<!--	AJAX -->
+<div>
+		<?if($arParams["REPORT_AJAX"] === "Y"):?>
+			<script>
+				BX.ready(function () {
+					var report_link = document.getElementById('report_ajax');
+					report_link.onclick = function (e) {
+						e.preventDefault();
+						BX.ajax.loadJSON(
+							"<?=$APPLICATION->GetCurPage();?>",
+							{
+								TYPE: "AJAX",
+								ID: <?=$arResult["ID"]?>
+							},
+							function (data) {
+								var responce_text = document.getElementById('report_responce');
+								responce_text.innerText = 'Ваше мнение учтено №' + data["ID"];
+							},
+							function(data) {
+								var responce_text = document.getElementById('report_responce');
+								responce_text.innerText = 'Ошибка NO ENTER CALLBACK';
+							}
+						)
+					}
+				});
+			</script>
+			<a id="report_ajax" href="<?=$APPLICATION->GetCurPage();?>">Пожаловаться</a>
+		<?else:?>
+			<a href="<?=$APPLICATION->GetCurPage() . '?TYPE=GET&ID='. $arResult["ID"]?>">Пожаловаться</a>
+		<?endif;?>
+		<div id="report_responce"></div>
+	</div>
+<br>
+<!--AJAX END -->
+
+
 	<div class="news-detail">
 	<?if($arParams["DISPLAY_PREVIEW_TEXT"]!="N" && $arResult["FIELDS"]["PREVIEW_TEXT"]):?>
 		<p><?=$arResult["FIELDS"]["PREVIEW_TEXT"];unset($arResult["FIELDS"]["PREVIEW_TEXT"]);?></p>

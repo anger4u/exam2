@@ -32,6 +32,10 @@ if($this->StartResultCache(false) && intval($arParams["NEWS_IBLOCK_ID"]) > 0)
 	$rsCurUser = CUser::GetList($sortCurUser, $orderCurUser, $filterCurUser, $paramCurUser);
 	// все поля текущего пользователя
 	$curUser = $rsCurUser->GetNext();
+	
+	echo '<pre>';
+	//var_dump($curUser);
+	echo '</pre>';
 //------------------------------------------------------------
 	// ПОЛУЧАЕМ СПИСОК ПОЛЬЗОВАТЕЛЕЙ
 	$sortUsers = array();
@@ -55,13 +59,13 @@ if($this->StartResultCache(false) && intval($arParams["NEWS_IBLOCK_ID"]) > 0)
 		"ID",
 		"IBLOCK_ID",
 		"NAME",
-		'PROPERTY_'.$arParams['AUTHOR_CODE'],
 		'DATE_ACTIVE_FROM',
 	);
 	$arFilterNews = array(
 		"IBLOCK_ID" => $arParams["NEWS_IBLOCK_ID"],
 		"ACTIVE" => "Y",
 		'PROPERTY_'.$arParams['AUTHOR_CODE'] => array_column($users, 'ID'),
+		'!PROPERTY_'.$arParams['AUTHOR_CODE'] => $curUser[$arParams['AUTHOR_CODE']],
 	);
 	$arSortNews = array(
 		"NAME" => "ASC"
@@ -69,10 +73,22 @@ if($this->StartResultCache(false) && intval($arParams["NEWS_IBLOCK_ID"]) > 0)
 	// массив новостей
 	$news = array();
 	$rsNews = CIBlockElement::GetList($arSortNews, $arFilterNews, false, false, $arSelectNews);
-	while($arNew = $rsNews->GetNext())
+	while($arNew = $rsNews->GetNextElement())
 	{
-		$news[] = $arNew;
+		$newProps = $arNew->GetProperties(false, array('AUTHOR'));
+		$newFields = $arNew->GetFields();
+		$newFields[$arParams['AUTHOR_CODE']] = $newProps['AUTHOR']['VALUE'];
+		$news[] = $newFields;
+		
 	}
+	
+	echo '<pre>';
+	//print_r($fields);
+	echo '</pre>';
+	
+	echo '<pre>';
+	var_dump($news);
+	echo '</pre>';
 //------------------------------------------------------------
 	// ФОРМИРУМЕМ arResult
 	$newsCount = 0;
@@ -92,13 +108,15 @@ if($this->StartResultCache(false) && intval($arParams["NEWS_IBLOCK_ID"]) > 0)
 	}
 	$arResult['NEWS_COUNT'] = $newsCount;
 	
-}
-$this->SetResultCacheKeys(array(
+	$this->SetResultCacheKeys(array(
 		'USERS',
 		'NEWS_COUNT'
 	));
 //var_export([__FILE__.__LINE__, $arResult]);
 	$this->includeComponentTemplate();
+	
+}
+
 
 $APPLICATION->SetTitle(GetMessage('NEWS_TITLE') . '['.$arResult['NEWS_COUNT'].']');
 ?>

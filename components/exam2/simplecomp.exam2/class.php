@@ -7,7 +7,7 @@ class SimpleComp2 extends CBitrixComponent
 {
     private $firms = array();
     private $elems = array();
-    
+
     // проверка подключения модулей
     private function CheckModules()
     {
@@ -51,12 +51,15 @@ class SimpleComp2 extends CBitrixComponent
             "nPageSize" => (int) $this->arParams["NAV_COUNT"],
             "bShowAll" => true,
         );
-        $res = CIBlockElement::GetList(array(), $arFilter, false, $arNavParams, $arSelect);
+        $arNavigation = CDBResult::GetNavParams($arNavParams);
+        $res = CIBlockElement::GetList(array(), $arFilter, false, $arNavigation, $arSelect);
         while ($ob = $res->Fetch())
         {
             $this->firms[] = $ob;
             //echo'<pre>';var_dump($ob);echo'</pre>';
         }
+        
+         $this->arResult["NAV_STRING"] = $res->GetPageNavStringEx($navComponentObject, "", "", true); //постраничная
         
         // получение елементов каталога и изменение url детального просмотра
         $arSort = array('NAME' => 'ASC', 'SORT' => 'ASC');
@@ -180,7 +183,10 @@ class SimpleComp2 extends CBitrixComponent
         $this -> CheckModules();
          global $USER;
          
-        if ($this -> StartResultCache(false, $USER->GetGroups()))
+        if ($this -> StartResultCache(false, array($USER->GetGroups(), CDBResult::GetNavParams(Array(
+            "nPageSize" => (int) $this->arParams["NAV_COUNT"],
+            "bShowAll" => true,
+        )))))
         {
             $this -> handlerParams();
             $this -> tCache();
@@ -197,7 +203,7 @@ class SimpleComp2 extends CBitrixComponent
 	{
 		$this->AbortResultCache();
 	}
-        $this->arResult["NAV_STRING"] = $res->GetPageNavStringEx($navComponentObject, "", "", true); //постраничная
+       
         global $APPLICATION;
         if ($APPLICATION->GetShowIncludeAreas())
 		{
